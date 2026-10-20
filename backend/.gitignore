@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Secrets and environment variables
+.env
+.env.*
+!.env.example
+
+# WhatsApp login session (credentials, never commit)
+wa_auth_session/
+
+# Private chat data (SQLite database and its temp files)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
