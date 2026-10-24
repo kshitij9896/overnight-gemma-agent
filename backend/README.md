@@ -55,6 +55,14 @@ If the `telegram` package is still listed in `package.json` from an earlier vers
 npm uninstall telegram
 ```
 
+Optional: for `.env` file support (see **Security** below), install `dotenv`:
+
+```bash
+npm install dotenv
+```
+
+The server works fine without it; it just won't read a `.env` file, and will use the built-in defaults or environment variables set directly in your shell.
+
 ### 2. Prepare Ollama
 
 Install Ollama from [ollama.com](https://ollama.com), then pull the model:
@@ -211,7 +219,43 @@ After logout, the frontend starts a new session, so the next user sees a fresh Q
 | Digest time | Set from the frontend, or `this.cronExpression` in `scheduler.js` | `0 7 * * *` (07:00 daily) |
 | Transcript size | `.slice(-6000)` in `gemmaSummarizer.js` | 6,000 characters |
 
-The `.env` file is not loaded by this server. Set `PORT` in the terminal before starting if you need a different port.
+The `.env` file is loaded automatically if the optional `dotenv` package is installed (see **Setup**). Otherwise, set these as regular environment variables before starting the server, or rely on the defaults.
+
+---
+
+## Security
+
+This server has **no login system** — anyone who can reach it over the network can read your summaries, change settings, or log you out. By default it's locked down for safe local use:
+
+| Protection | Default | Purpose |
+| --- | --- | --- |
+| Network binding | `127.0.0.1` only | Only this machine can reach the API, even on a shared Wi-Fi network |
+| CORS allow-list | Vite's dev/preview ports only | Other websites open in your browser can't call this API |
+| Mock/seed route | Disabled when `NODE_ENV=production` | Prevents strangers from injecting fake messages if the API is ever exposed |
+| Input validation | On `/api/config/save` | Rejects malformed `hour`/`minute`/`groupIds` values |
+| `.gitignore` | Excludes `.env`, `wa_auth_session/`, `*.db` | Keeps secrets and chat data out of version control |
+
+### Configuration
+
+Copy `.env.example` to `.env` to customize these (requires the optional `dotenv` package — see **Setup** above). Without `dotenv` installed, you can still set the same values as regular environment variables before starting the server.
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `PORT` | `4000` | Port the API listens on |
+| `HOST` | `127.0.0.1` | Network interface to bind to. Only change to `0.0.0.0` if you deliberately want other devices to reach it |
+| `FRONTEND_ORIGINS` | Vite's default ports | Comma-separated list of origins allowed to call the API |
+| `NODE_ENV` | unset (development) | Set to `production` to disable the `/api/mock/seed` test route |
+
+### If you want to expose this beyond your own machine
+
+The defaults above assume you're the only person using the app on your own computer, which matches how this project is meant to be used. If you ever deploy it so other people or other devices can reach it, you would additionally need:
+
+- An authentication layer (e.g., an API key or login) in front of every route
+- HTTPS, since the API currently runs over plain HTTP
+- Rate limiting, to stop repeated logout/summarize calls from being abused
+- A WhatsApp session per user, since this server supports only one session at a time
+
+These aren't implemented, since they're unnecessary complexity for local, single-user use.
 
 ---
 
