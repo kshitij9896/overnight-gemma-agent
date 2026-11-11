@@ -1,41 +1,41 @@
 name: CI
 
 on:
-   push:
+  push:
     branches: [master]
-   pull_request:
+  pull_request:
     branches: [master]
 
 jobs:
   frontend:
-   name: Frontend (lint + build)
-   runs-on: ubuntu-latest
-   defaults:
-     run:
-      working-directory: frontend
-   steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: npm
-        cache-dependency-path: '**/package-lock.json'
-    - run: npm ci --legacy-peer-deps
-    - run: npm run lint
-    - run: npm run build
+    name: Frontend (lint + build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
+      - run: npm ci --legacy-peer-deps
+      - run: npm run lint
+      - run: npm run build
 
   backend:
-    name: Backend (Install + syantax check)
-    runs-on : ubuntu-latest
+    name: Backend (Install + syntax check)
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-         node-version: 22
-         cache: npm
-        cache-depedency-path: '**/package-lock.json'
-     - run: npm ci --legacy-peer-deps
-     - run: node --check server.js                          
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
+      - run: npm ci --legacy-peer-deps
+      - run: node --check server.js
