@@ -2,9 +2,9 @@ name: CI
 
 on:
    push:
-    branches: [main, master]
+    branches: [master]
    pull_request:
-    branches: [main, master]
+    branches: [master]
 
 jobs:
   frontend:
@@ -17,9 +17,9 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
         cache: npm
-        cache-depedency-path: frontend/package-lock.json
+        cache-dependency-path: '**/package-lock.json'
     - run: npm ci --legacy-peer-deps
     - run: npm run lint
     - run: npm run build
@@ -34,8 +34,8 @@ jobs:
      - uses: actions/checkout@v4
      - uses: actions/setup-node@v4
        with:
-         node-version: 20
+         node-version: 22
          cache: npm
-         cache-depedency-path: backend/package-lock.json
+        cache-depedency-path: '**/package-lock.json'
      - run: npm ci --legacy-peer-deps
      - run: node --check server.js                          
