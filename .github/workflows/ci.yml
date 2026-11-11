@@ -31,9 +31,9 @@ jobs:
       run:
         working-directory: backend
     steps:
-     - uses: actions/checkout@v4
-     - uses: actions/setup-node@v4
-       with:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
          node-version: 22
          cache: npm
         cache-depedency-path: '**/package-lock.json'
